@@ -9,7 +9,8 @@ def hyperparameter_optimization_task_creator(conn,args):
     fn = "automatic_generated_tasks.txt"
     
     cur = conn.cursor()
-    query = lambda x: f"WITH acc AS(SELECT MAX(acc) as max_acc FROM {args.best_test_results_table_name} WHERE task like 'ss{x}%')  SELECT task FROM {args.best_test_results_table_name}, acc WHERE acc=max_acc and task like 'ss{x}%';"
+    query = lambda x: f"WITH acc AS(SELECT MAX(acc) as max_acc FROM {args.best_test_results_table_name} WHERE task like 'ss{x}%'), best_acc_selection AS (SELECT * FROM {args.best_test_results_table_name} , acc WHERE acc=max_acc and task like 'ss{x}%'), best_loss AS(SELECT min(loss) as best_loss FROM best_acc_selection) SELECT task FROM best_acc_selection,best_loss WHERE loss=best_loss LIMIT 1;"
+
     with open(fn, "w") as f:
         for ss in [8,16,32]:
             cur.execute(query(ss))
