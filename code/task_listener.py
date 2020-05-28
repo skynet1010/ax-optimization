@@ -1,8 +1,8 @@
 import pika
 import psycopg2
-from code.utils.messagebroker_new_tasks import create_new_tasks
-from code.utils.consts import model_dict
-from code.BOBO_hypterparameter_search import hyperparameter_optimization
+from utils.messagebroker_new_tasks import create_new_tasks
+from utils.consts import model_dict
+from BOBO_hypterparameter_search import hyperparameter_optimization
 
 
 def hyperparameter_optimization_task_creator(conn,args):
