@@ -8,7 +8,6 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("-bs", "--batch_size",dest="batch_size", default=128,type=int)
     parser.add_argument("-e","--epochs", dest="epochs", default=20,type=int)
-    parser.add_argument("-i","--iterations", dest="iterations", default=5,type=int)
     parser.add_argument("-ife", "--is_feature_extraction", dest="is_feature_extraction", default=1,type=int,help="0=False,1=True")
     parser.add_argument("-d", "--data_dir", dest="data_dir", default=os.path.join("..","shared","data"))
     parser.add_argument("-r", "--results_dir", dest="results_dir", default=os.path.join("..","shared","results"))
