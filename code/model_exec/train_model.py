@@ -41,6 +41,7 @@ def train(
             lbl_onehot = lbl_onehot.scatter(1,data["labels"].to(device=device,dtype=torch.long),1).to(device=device,dtype=dtype)
             # ===================forward=====================
             output = model(img)
+            print(output.size(),lbl_onehot.size())
             loss = criterion(output, lbl_onehot)
             # ===================backward====================
             optimizer.zero_grad()
