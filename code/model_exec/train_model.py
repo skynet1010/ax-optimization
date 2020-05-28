@@ -29,6 +29,7 @@ def train(
     fp_c = 0
     tn_c = 0
     fn_c = 0
+    print(len(train_data_loader))
 
     for e in range(args.epochs):
         for step,data in enumerate(train_data_loader):
