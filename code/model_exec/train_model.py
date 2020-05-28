@@ -94,7 +94,7 @@ def train(
             tn_c += confidence[tn_idx].sum().item()
             fn_c += confidence[fn_idx].sum().item()
 
-    metrics = {"acc":correct/total, "loss":running_loss/total,"TP":tp,"FN":fn,"FP":fp,"TN":tn,"TPC":tp_c/total,"FPC":fp_c/total,"TNC":tn_c/total,"FNC":fn_c/total}
+    metrics = {"acc":correct/total, "loss":running_loss/total,"TP":tp,"FN":fn,"FP":fp,"TN":tn,"TPC":tp_c/tp,"FPC":fp_c/fp,"TNC":tn_c/tn,"FNC":fn_c/fn}
     print(metrics)
     exit(1)
     return model,metrics
