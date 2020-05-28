@@ -51,7 +51,7 @@ def start_task_listener(args):
             try:
                 if task=="create_hyperparameter_optimization_task":
                     finished_successfully = hyperparameter_optimization_task_creator(conn,args)
-                elif len(task.split(":"))[0] == "HO":
+                elif task.split(":")[0] == "HO":
                     finished_successfully = hyperparameter_optimization(conn,args,task)
                 conn.close()
             except RuntimeError as e:
