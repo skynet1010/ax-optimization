@@ -48,7 +48,7 @@ def objective(parameters):
     parameters_str = str(parameters)
     res_path = get_valid_path(args,data_composition_key,ss)
 
-    best_checkpoint_path = os.path.join(res_path,f"best_{model_key}.pth")
+    best_checkpoint_path = os.path.join(res_path,f"best_{model_key}_final.pth")
 
     train_data_loader, valid_data_loader, test_data_loader = get_dataloaders(args,ss,data_composition_key, model_key)
     model = manipulateModel(model_key,args.is_feature_extraction,data_compositions[data_composition_key])
@@ -61,42 +61,45 @@ def objective(parameters):
 
     update = False
     no_improve_it = 0
-    for epoch in range(args.epochs+1):
-        start = time.time()
-        model,train_metrics = train(model,train_data_loader,criterion,optimizer,args.batch_size) 
-        valid_metrics =  evaluate(model,valid_data_loader,criterion,optimizer,args.batch_size)
+    try:
+        for epoch in range(args.epochs+1):
+            start = time.time()
+            model,train_metrics = train(model,train_data_loader,criterion,optimizer,args.batch_size) 
+            valid_metrics =  evaluate(model,valid_data_loader,criterion,optimizer,args.batch_size)
 
-        train_metrics = calc_metrics(train_metrics)
-        valid_metrics = calc_metrics(valid_metrics)
-        curr_exec_time = time.time()-start
+            train_metrics = calc_metrics(train_metrics)
+            valid_metrics = calc_metrics(valid_metrics)
+            curr_exec_time = time.time()-start
 
-        train_metrics["exec_time"] = curr_exec_time
-        if valid_metrics["loss"] < best_loss:
-            best_acc = valid_metrics["acc"]
-            best_loss = valid_metrics["loss"]
-            update=True
-        elif valid_metrics["loss"] == best_loss and best_acc > valid_metrics["acc"]:
-            best_acc = valid_metrics["acc"]
-            update=True
-        elif valid_metrics["acc"] == best_acc and best_loss == valid_metrics["loss"] and curr_exec_time<best_exec_time:
-            update=True
-        if update:
-            no_improve_it = 0
-            best_exec_time = curr_exec_time
-            valid_metrics["exec_time"]=best_exec_time
-            torch.save({"epoch":epoch,"model_state_dict":model.state_dict(),"optimizer_state_dict":optimizer.state_dict()}, best_checkpoint_path)
+            train_metrics["exec_time"] = curr_exec_time
+            if valid_metrics["loss"] < best_loss:
+                best_acc = valid_metrics["acc"]
+                best_loss = valid_metrics["loss"]
+                update=True
+            elif valid_metrics["loss"] == best_loss and best_acc > valid_metrics["acc"]:
+                best_acc = valid_metrics["acc"]
+                update=True
+            elif valid_metrics["acc"] == best_acc and best_loss == valid_metrics["loss"] and curr_exec_time<best_exec_time:
+                update=True
+            if update:
+                no_improve_it = 0
+                best_exec_time = curr_exec_time
+                valid_metrics["exec_time"]=best_exec_time
+                torch.save({"epoch":epoch,"model_state_dict":model.state_dict(),"optimizer_state_dict":optimizer.state_dict()}, best_checkpoint_path)
+                conn.commit()
+                update=False
+            else:
+                no_improve_it+=1
+            cur.execute(insert_row(args.train_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=train_metrics))
             conn.commit()
-            update=False
-        else:
-            no_improve_it+=1
-        cur.execute(insert_row(args.train_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=train_metrics))
-        conn.commit()
-        cur.execute(insert_row(args.validation_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=valid_metrics))
-        conn.commit()
+            cur.execute(insert_row(args.validation_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=valid_metrics))
+            conn.commit()
 
-        print('epoch [{}/{}], loss:{:.4f}, {:.4f}%, time: {}'.format(epoch, args.epochs, valid_metrics["loss"],valid_metrics["acc"]*100, curr_exec_time))        
-        if no_improve_it == args.earlystopping_it:
-            break
+            print('epoch [{}/{}], loss:{:.4f}, {:.4f}%, time: {}'.format(epoch, args.epochs, valid_metrics["loss"],valid_metrics["acc"]*100, curr_exec_time))        
+            if no_improve_it == args.earlystopping_it:
+                break
+    except Exception as e:
+        print("something wrong during model train/valid", e)
     model = manipulateModel(model_key,args.is_feature_extraction,data_compositions[data_composition_key])
     if not os.path.isfile(best_checkpoint_path):
         print("Best checkpoint file does not exist!!!")
