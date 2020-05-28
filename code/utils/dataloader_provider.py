@@ -11,7 +11,7 @@ from numpy import floor
 
 def get_dataloaders(args,ss, data_composition_key,model_key,validation=True):
 
-    input_filename = f"train_test_data_{ss}_supervised.hdf5"
+    input_filename = f"train_test_data_{ss}_supervised_new.hdf5"
 
     real_data_path = os.path.join("..","data")
     if not os.path.isdir(real_data_path):
@@ -24,7 +24,7 @@ def get_dataloaders(args,ss, data_composition_key,model_key,validation=True):
     valid_ss = ["ss8","ss16","ss24","ss32"]
     for v_ss in valid_ss:
         if v_ss!=ss:
-            old_input_filename = os.path.join(real_data_path,f"train_test_data_{v_ss}_supervised.hdf5")
+            old_input_filename = os.path.join(real_data_path,f"train_test_data_{v_ss}_supervised_new.hdf5")
             if not os.path.isfile(old_input_filename):
                 continue
             else:

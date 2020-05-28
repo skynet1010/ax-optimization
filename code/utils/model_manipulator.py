@@ -8,8 +8,8 @@ def set_parameter_requires_grad(model, feature_extracting):
             param.requires_grad = False
 
 def manipulateModel(model_name, is_feature_extraction,dim):
-    model = model_dict[model_name](pretrained=is_feature_extraction)
-    set_parameter_requires_grad(model, True)
+    model = model_dict[model_name](pretrained=True)
+    set_parameter_requires_grad(model, is_feature_extraction)
     #output layer
     if model_name == "resnet18" or \
         model_name == "resnet50" or \
