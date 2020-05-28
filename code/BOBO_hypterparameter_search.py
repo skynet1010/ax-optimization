@@ -70,8 +70,8 @@ def objective(parameters:Dict):
 
     update = False
     no_improve_it = 0
-    try:
-        for epoch in range(1,args.epochs+1):
+    for epoch in range(1,args.epochs+1):
+        try:
             start = time.time()
             model,train_metrics = train(model,train_data_loader,optimizer,criterion) 
             train_metrics = calc_metrics(train_metrics)
@@ -110,8 +110,18 @@ def objective(parameters:Dict):
             print('epoch [{}/{}], loss:{:.4f}, acc: {:.4f}%, time: {} s'.format(epoch, args.epochs, valid_metrics["loss"],valid_metrics["acc"]*100, train_exec_time+valid_exec_time))        
             if no_improve_it == args.earlystopping_it:
                 break
-    except Exception as e:
-        print("something wrong during model train/valid", e)
+        except RuntimeError as e:
+            if 'out of memory' in str(e):
+                print('| WARNING: ran out of memory, halfing batch size')
+                args.batch_size=max(1,args.batch_size//2)
+                print(f"Batch size is now: {args.batch_size}")
+                return objective(parameters)
+            else:
+                print("Another RuntimeError occured during train an validation", e)
+                exit(1) 
+        except Exception as e:
+            print(e)
+            exit(1)
     model = manipulateModel(model_key,args.is_feature_extraction,data_compositions[data_composition_key])
     if not os.path.isfile(best_checkpoint_path):
         print("Best checkpoint file does not exist!!!")

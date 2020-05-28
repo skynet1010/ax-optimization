@@ -48,24 +48,11 @@ def start_task_listener(args):
         except Exception as e:
             raise e
         while not finished_successfully:
-            try:
-                if task=="create_hyperparameter_optimization_task":
-                    finished_successfully = hyperparameter_optimization_task_creator(conn,args)
-                elif task.split(":")[0] == "HO":
-                    finished_successfully = hyperparameter_optimization(args, conn,task)
-                conn.close()
-            except RuntimeError as e:
-                if 'out of memory' in str(e):
-                    print('| WARNING: ran out of memory, halfing batch size')
-                    args.batch_size=max(1,args.batch_size//2)
-                    print(f"Batch size is now: {args.batch_size}")
-                    continue
-                else:
-                    print(e)
-                    exit(1) 
-            except Exception as e:
-                print(e)
-                exit(1)
+            if task=="create_hyperparameter_optimization_task":
+                finished_successfully = hyperparameter_optimization_task_creator(conn,args)
+            elif task.split(":")[0] == "HO":
+                finished_successfully = hyperparameter_optimization(args, conn,task)
+            conn.close()
                     
         args.batch_size = init_batch_size
         print(" [x] Done |:->")
