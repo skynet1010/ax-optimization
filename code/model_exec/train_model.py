@@ -48,7 +48,7 @@ def train(
             running_loss+=(loss.item()*tmp_batch_size)
 
             out_softmax = softmax(output)
-            print(out_softmax)
+            #print(out_softmax)
 
             confidence, predicted = torch.max(out_softmax, 1)
             total += tmp_batch_size
@@ -75,8 +75,9 @@ def train(
             fn_idx = torch.squeeze(fn_idx)
             fn += (fn_idx).sum().item()
 
-            print("bis hier alles gut xD")
-
+            #print("bis hier alles gut xD")
+            print(confidence)
+            print(confidence.size())
             tp_c += confidence[tp_idx].sum().item()
             fp_c += confidence[fp_idx].sum().item()
             tn_c += confidence[tn_idx].sum().item()
