@@ -71,61 +71,48 @@ def objective(parameters:Dict):
     update = False
     no_improve_it = 0
     for epoch in range(1,args.epochs+1):
-        try:
-            start = time.time()
-            model,train_metrics = train(model,train_data_loader,optimizer,criterion) 
-            train_metrics = calc_metrics(train_metrics)
-            train_exec_time = time.time()-start
+        start = time.time()
+        model,train_metrics = train(model,train_data_loader,optimizer,criterion) 
+        train_metrics = calc_metrics(train_metrics)
+        train_exec_time = time.time()-start
 
-            start = time.time()
-            valid_metrics =  evaluate(model,valid_data_loader,criterion)
-            valid_metrics = calc_metrics(valid_metrics)
-            valid_exec_time = time.time()-start
+        start = time.time()
+        valid_metrics =  evaluate(model,valid_data_loader,criterion)
+        valid_metrics = calc_metrics(valid_metrics)
+        valid_exec_time = time.time()-start
 
-            train_metrics["exec_time"] = train_exec_time
-            valid_metrics["exec_time"] = valid_exec_time
-            if valid_metrics["loss"] < best_loss:
-                best_acc = valid_metrics["acc"]
-                best_loss = valid_metrics["loss"]
-                update=True
-            elif valid_metrics["loss"] == best_loss and best_acc > valid_metrics["acc"]:
-                best_acc = valid_metrics["acc"]
-                update=True
-            elif valid_metrics["acc"] == best_acc and best_loss == valid_metrics["loss"] and valid_exec_time<best_exec_time:
-                update=True
-            if update:
-                no_improve_it = 0
-                best_exec_time = valid_exec_time
-                torch.save({"epoch":epoch,"model_state_dict":model.state_dict(),"optimizer_state_dict":optimizer.state_dict()}, best_checkpoint_path)
-                with open(best_param_config_path,"w")as f:
-                    json.dump(parameters,f)
-                update=False
-            else:
-                no_improve_it+=1
-            cur.execute(insert_row(args.train_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=train_metrics))
-            conn.commit()
-            cur.execute(insert_row(args.validation_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=valid_metrics))
-            conn.commit()
+        train_metrics["exec_time"] = train_exec_time
+        valid_metrics["exec_time"] = valid_exec_time
+        if valid_metrics["loss"] < best_loss:
+            best_acc = valid_metrics["acc"]
+            best_loss = valid_metrics["loss"]
+            update=True
+        elif valid_metrics["loss"] == best_loss and best_acc > valid_metrics["acc"]:
+            best_acc = valid_metrics["acc"]
+            update=True
+        elif valid_metrics["acc"] == best_acc and best_loss == valid_metrics["loss"] and valid_exec_time<best_exec_time:
+            update=True
+        if update:
+            no_improve_it = 0
+            best_exec_time = valid_exec_time
+            torch.save({"epoch":epoch,"model_state_dict":model.state_dict(),"optimizer_state_dict":optimizer.state_dict()}, best_checkpoint_path)
+            with open(best_param_config_path,"w")as f:
+                json.dump(parameters,f)
+            update=False
+        else:
+            no_improve_it+=1
+        cur.execute(insert_row(args.train_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=train_metrics))
+        conn.commit()
+        cur.execute(insert_row(args.validation_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=valid_metrics))
+        conn.commit()
 
-            print('epoch [{}/{}], loss:{:.4f}, acc: {:.4f}%, time: {} s'.format(epoch, args.epochs, valid_metrics["loss"],valid_metrics["acc"]*100, train_exec_time+valid_exec_time))        
-            if no_improve_it == args.earlystopping_it:
-                break
-        except RuntimeError as e:
-            if 'out of memory' in str(e):
-                print('| WARNING: ran out of memory, halfing batch size')
-                args.batch_size=max(1,args.batch_size//2)
-                print(f"Batch size is now: {args.batch_size}")
-                continue
-            else:
-                print("Another RuntimeError occured during train an validation", e)
-                exit(1) 
-        except Exception as e:
-            print(e)
-            exit(1)
+        print('epoch [{}/{}], loss:{:.4f}, acc: {:.4f}%, time: {} s'.format(epoch, args.epochs, valid_metrics["loss"],valid_metrics["acc"]*100, train_exec_time+valid_exec_time))        
+        if no_improve_it == args.earlystopping_it:
+            break
     model = manipulateModel(model_key,args.is_feature_extraction,data_compositions[data_composition_key])
     if not os.path.isfile(best_checkpoint_path):
         print("Best checkpoint file does not exist!!!")
-        return True
+        return exit(1)
     
     best_checkpoint = torch.load(best_checkpoint_path)
     model.load_state_dict(best_checkpoint["model_state_dict"])
@@ -139,6 +126,26 @@ def objective(parameters:Dict):
     cur.execute(insert_row(args.test_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=test_metrics))
     conn.commit()
 
+    return best_acc,True
+
+def objective_wrapper(parameters:Dict):
+    finished_successfully=False
+    init_batch_size = args.batch_size
+    while not finished_successfully:
+        try:
+            best_acc, finished_successfully = objective(parameters)
+        except RuntimeError as e:
+            if 'out of memory' in str(e):
+                print('| WARNING: ran out of memory, halfing batch size')
+                args.batch_size=max(1,args.batch_size//2)
+                print(f"Batch size is now: {args.batch_size}")
+            else:
+                print("Another RuntimeError occured during train an validation", e)
+                exit(1) 
+        except Exception as e:
+            print(e)
+            exit(1)
+    args.batch_size = init_batch_size
     return best_acc
 
 def hyperparameter_optimization(a:Namespace,c:connection,t:str):
@@ -173,7 +180,7 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
             {"name":"criterion","type":"choice", "values":["BCELoss","MSELoss"]},
             {"name":"feature_extraction","type":"choice", "values":[True,False]}
         ],
-        evaluation_function=objective,
+        evaluation_function=objective_wrapper,
         objective_name='accuracy',
         minimize=False,
         arms_per_trial=1,

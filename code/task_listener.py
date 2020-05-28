@@ -4,24 +4,6 @@ from utils.messagebroker_new_tasks import create_new_tasks
 from utils.consts import model_dict
 from BOBO_hypterparameter_search import hyperparameter_optimization
 
-
-def hyperparameter_optimization_task_creator(conn,args):
-    fn = "automatic_generated_tasks.txt"
-    
-    cur = conn.cursor()
-    query = lambda x: f"WITH acc AS(SELECT MAX(acc) as max_acc FROM {args.best_test_results_table_name} WHERE task like 'ss{x}%'), best_acc_selection AS (SELECT * FROM {args.best_test_results_table_name} , acc WHERE acc=max_acc and task like 'ss{x}%'), best_loss AS(SELECT min(loss) as best_loss FROM best_acc_selection) SELECT task FROM best_acc_selection,best_loss WHERE loss=best_loss LIMIT 1;"
-
-    with open(fn, "w") as f:
-        for ss in [8,16,32]:
-            cur.execute(query(ss))
-            res = cur.fetchall()
-            task=res[0][0]
-            task= task.rstrip()
-            task="HO:"+task
-            f.write(task)
-    create_new_tasks(fn,args.rabbitmq_server)
-
-    return True
     
 def start_task_listener(args):
 
@@ -39,22 +21,15 @@ def start_task_listener(args):
     print(" [*] Waiting for tasks. To exit press CTRL+C")
 
     def callback(ch,method,properties,body):
-        init_batch_size = args.batch_size
         task = body.decode("utf-8")
         print(" [x] Received " + task)
-        finished_successfully = False
         try:
             conn = psycopg2.connect(host=args.database_host,database=args.database,user=args.database_user,password=args.database_password)
         except Exception as e:
             raise e
-        while not finished_successfully:
-            if task=="create_hyperparameter_optimization_task":
-                finished_successfully = hyperparameter_optimization_task_creator(conn,args)
-            elif task.split(":")[0] == "HO":
-                finished_successfully = hyperparameter_optimization(args, conn,task)
-            conn.close()
-                    
-        args.batch_size = init_batch_size
+        if task.split(":")[0] == "HO":
+            finished_successfully = hyperparameter_optimization(args, conn,task)
+        conn.close()            
         print(" [x] Done |:->")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
