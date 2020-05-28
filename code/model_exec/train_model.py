@@ -58,18 +58,25 @@ def train(
 
             label_ones_idx = labels.nonzero()
             label_zeroes_idx = (labels==0).nonzero()
+            
             tp_idx = pred_cpu[label_ones_idx]==labels[label_ones_idx]
-
-            print(torch.squeeze(tp_idx))
             tp_idx = torch.squeeze(tp_idx)
             tp += (tp_idx).sum().item()
-            print(tp)
+
             fp_idx = pred_cpu[label_ones_idx]!=labels[label_ones_idx]
+            fp_idx = torch.squeeze(fp_idx)
             fp += (fp_idx).sum().item()
+            
             tn_idx = pred_cpu[label_zeroes_idx]==labels[label_zeroes_idx]
+            tn_idx = torch.squeeze(tn_idx)
             tn += (tn_idx).sum().item()
+
             fn_idx = pred_cpu[label_zeroes_idx]!=labels[label_zeroes_idx] 
+            fn_idx = torch.squeeze(fn_idx)
             fn += (fn_idx).sum().item()
+
+            print("bis hier alles gut xD")
+
             tp_c += confidence[tp_idx].sum().item()
             fp_c += confidence[fp_idx].sum().item()
             tn_c += confidence[tn_idx].sum().item()
