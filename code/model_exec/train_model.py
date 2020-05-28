@@ -46,12 +46,12 @@ def train(
             out_softmax = softmax(output)
 
             loss = criterion(out_softmax, lbl_onehot)
-            print(loss.item())
+            #print(loss.item())
 
             # ===================backward====================
             optimizer.zero_grad()
             loss.backward()
-            print(loss.item())
+            #print(loss.item())
 
             optimizer.step()
             running_loss+=(loss.item()*tmp_batch_size)
@@ -96,4 +96,5 @@ def train(
 
     metrics = {"acc":correct/total, "loss":running_loss/total,"TP":tp,"FN":fn,"FP":fp,"TN":tn,"TPC":tp_c/total,"FPC":fp_c/total,"TNC":tn_c/total,"FNC":fn_c/total}
     print(metrics)
+    exit(1)
     return model,metrics
