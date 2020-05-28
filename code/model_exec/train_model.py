@@ -45,12 +45,15 @@ def train(
             print("HELLO4")
             output = model(img)
             loss = criterion(output, lbl_onehot)
+            print("HELLO5")
             # ===================backward====================
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             running_loss+=(loss.item()*tmp_batch_size)
             #determine acc
+            print("HELLO6")
+
             out_softmax = softmax(output)
             print(out_softmax)
 
