@@ -46,6 +46,7 @@ def get_valid_path(args,data_composition_key,ss):
 
 def objective(parameters):
     parameters_str = str(parameters)
+    print(parameters_str)
     res_path = get_valid_path(args,data_composition_key,ss)
 
     best_checkpoint_path = os.path.join(res_path,f"best_{model_key}_final.pth")
