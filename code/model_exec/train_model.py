@@ -46,6 +46,7 @@ def train(
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            print(loss.size())
             running_loss+=(loss.item()*tmp_batch_size)
 
             out_softmax = softmax(output)

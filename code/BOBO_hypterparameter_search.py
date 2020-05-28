@@ -139,7 +139,7 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
     global data_composition_key
     global model_key
     _,ss,data_composition_key,model_key,ntrails,epochs=task.split(":")
-    args.epochs = int(epochs)
+    args.epochs = 2#int(epochs)
 
     make_sure_table_exist(args, conn, cur, args.train_results_ax_table_name)
     make_sure_table_exist(args, conn, cur, args.validation_results_ax_table_name)
