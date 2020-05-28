@@ -59,9 +59,11 @@ def train(
             label_ones_idx = labels.nonzero()
             label_zeroes_idx = (labels==0).nonzero()
             tp_idx = pred_cpu[label_ones_idx]==labels[label_ones_idx]
+
             print(torch.squeeze(tp_idx))
             tp_idx = torch.squeeze(tp_idx)
             tp += (tp_idx).sum().item()
+            print(tp)
             fp_idx = pred_cpu[label_ones_idx]!=labels[label_ones_idx]
             fp += (fp_idx).sum().item()
             tn_idx = pred_cpu[label_zeroes_idx]==labels[label_zeroes_idx]
