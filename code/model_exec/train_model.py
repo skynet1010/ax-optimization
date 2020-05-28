@@ -45,6 +45,8 @@ def train(
             print("HELLO4")
             output = model(img)
             print("HELLO$$$")
+            print(output)
+            print(lbl_onehot)
             loss = criterion(output, lbl_onehot)
             print("HELLO5")
             # ===================backward====================
