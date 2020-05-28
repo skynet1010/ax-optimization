@@ -57,9 +57,11 @@ optimizer_dict = {
     "Adamax":torch.optim.Adamax,
     "ASGD":torch.optim.ASGD,
     "RMSprop":torch.optim.RMSprop,
-    "Rprop":torch.optim.Rprop,
     "SGD":torch.optim.SGD
 }
+
+#    "Rprop":torch.optim.Rprop,
+
 
 loss_dict = {
     "BCELoss":torch.nn.BCELoss,

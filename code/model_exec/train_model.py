@@ -61,6 +61,7 @@ def train(
             label_ones_idx = labels.nonzero()
             label_zeroes_idx = (labels==0).nonzero()
             tp_idx = pred_cpu[label_ones_idx]==labels[label_ones_idx]
+            print(tp_idx)
             tp += (tp_idx).sum().item()
             fp_idx = pred_cpu[label_ones_idx]!=labels[label_ones_idx]
             fp += (fp_idx).sum().item()

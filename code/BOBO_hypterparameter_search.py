@@ -149,7 +149,7 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
         parameters=[
             {"name": "lr", "type": "range", "bounds": [1e-7, 0.5], "log_scale": True},
             {"name": "weight_decay", "type": "range", "bounds": [1e-8, .5],"log_scale": True},
-            {"name":"optimizer","type":"choice", "values":["Adadelta","Adagrad","Adam","AdamW","Adamax","ASGD","RMSprop","Rprop","SGD"]},
+            {"name":"optimizer","type":"choice", "values":["Adadelta","Adagrad","Adam","AdamW","Adamax","ASGD","RMSprop","SGD"]},
             {"name":"criterion","type":"choice", "values":["BCELoss","MSELoss"]}
         ],
         evaluation_function=objective,
