@@ -55,7 +55,6 @@ def objective(parameters):
     model = manipulateModel(model_key,args.is_feature_extraction,data_compositions[data_composition_key])
     
     criterion = loss_dict[parameters.get("criterion","MSELoss")]()
-    print(criterion)
     optimizer = optimizer_dict[parameters.get("optimizer")](model.parameters(), lr=parameters.get("lr"),weight_decay=parameters.get("weight_decay"))
 
 
@@ -73,7 +72,9 @@ def objective(parameters):
             valid_metrics =  evaluate(model,valid_data_loader,criterion)
 
             train_metrics = calc_metrics(train_metrics)
+            print("TRAIN:",train_metrics)
             valid_metrics = calc_metrics(valid_metrics)
+            print("VALID:", valid_metrics)
             curr_exec_time = time.time()-start
 
             train_metrics["exec_time"] = curr_exec_time

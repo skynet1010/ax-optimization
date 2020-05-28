@@ -30,7 +30,7 @@ def train(
     tn_c = 0
     fn_c = 0
 
-    for e in range(args.epochs):
+    for e in range(1,args.epochs+1):
         for step,data in enumerate(train_data_loader):
             tmp_batch_size = len(data["labels"])
             lbl_onehot = torch.FloatTensor(tmp_batch_size,2).to(device=device,dtype=dtype)
