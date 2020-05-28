@@ -44,11 +44,12 @@ def train(
             #print(output.size(),lbl_onehot.size())
             #print(output,lbl_onehot)
             loss = criterion(output, lbl_onehot)
+            print(loss.item())
+
             # ===================backward====================
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            print(loss)
             running_loss+=(loss.item()*tmp_batch_size)
 
             out_softmax = softmax(output)
