@@ -76,9 +76,9 @@ def train(
             fn += (fn_idx).sum().item()
 
             #print("bis hier alles gut xD")
-            print(confidence)
-            print(confidence.size())
-            tp_c += confidence[tp_idx].sum().item()
+            
+            tp_c += confidence[tp_idx.numpy().tolist()].sum().item()
+            print(tp_c)
             fp_c += confidence[fp_idx].sum().item()
             tn_c += confidence[tn_idx].sum().item()
             fn_c += confidence[fn_idx].sum().item()
