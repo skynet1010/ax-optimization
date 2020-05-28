@@ -56,8 +56,8 @@ def train(
             pred_cpu = predicted.cpu()
             correct += (pred_cpu == labels).sum().item()
 
-            label_ones_idx = labels.nonzero()
-            label_zeroes_idx = (labels==0).nonzero()
+            label_ones_idx = torch.squeeze(labels.nonzero())
+            label_zeroes_idx = torch.squeeze((labels==0).nonzero())
             #print(label_ones_idx,label_ones_idx.size())
             tp_idx = (pred_cpu[label_ones_idx]==labels[label_ones_idx]).nonzero()
             print(tp_idx,tp_idx.size())
