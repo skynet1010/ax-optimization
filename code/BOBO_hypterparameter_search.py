@@ -11,6 +11,7 @@ import time
 import os
 import sys
 import json
+from ax import save
 
 from utils.dataloader_provider import get_dataloaders
 from utils.postgres_functions import insert_row,  make_sure_table_exist
@@ -27,6 +28,7 @@ ss = None
 data_composition_key = None
 model_key = None
 task = None
+res_path = None
 
 best_loss = sys.float_info.max
 best_acc = 0.0
@@ -50,6 +52,7 @@ def get_valid_path(args,data_composition_key,ss):
 def objective(parameters:Dict):
     parameters_str = str(parameters).replace("'","*")
     print(parameters_str)
+    global res_path
     res_path = get_valid_path(args,data_composition_key,ss)
 
     best_checkpoint_path = os.path.join(res_path,f"best_{model_key}_final.pth")
@@ -144,13 +147,13 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
     global data_composition_key
     global model_key
     _,ss,data_composition_key,model_key,ntrails,epochs=task.split(":")
-    args.epochs = int(epochs)
+    args.epochs = 2#int(epochs)
 
     make_sure_table_exist(args, conn, cur, args.train_results_ax_table_name)
     make_sure_table_exist(args, conn, cur, args.validation_results_ax_table_name)
     make_sure_table_exist(args, conn, cur, args.test_results_ax_table_name)
 
-    objective({})
+    objective({}) #initial run config
 
     best_parameters, values, experiment, model = optimize(
         parameters=[
@@ -164,8 +167,9 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
         objective_name='accuracy',
         minimize=False,
         arms_per_trial=1,
-        total_trials=int(ntrails)#<---------------------------anpassen je nach task =)
+        total_trials=2#int(ntrails)#<---------------------------anpassen je nach task =)
     )
     
+    save(experiment,os.path.join(res_path,"experiment.json"))
         
     return True
