@@ -155,5 +155,6 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
         arms_per_trial=1,
         total_trials=int(ntrails)#<---------------------------anpassen je nach task =)
     )
+    
         
     return True

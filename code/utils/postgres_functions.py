@@ -40,6 +40,7 @@ def insert_row(table_name, args, task, parametrization, nepoch=0, timestamp=0, m
     """
 
 def make_sure_table_exist(args, conn, cur, table_name):
+    print("make_sure_table_exist")
     cur.execute("select exists(select * from information_schema.tables where table_name=%s)", (table_name,))
     table_exists = cur.fetchone()[0]
     if not table_exists:
