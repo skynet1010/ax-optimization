@@ -49,6 +49,8 @@ def train(
             # ===================backward====================
             optimizer.zero_grad()
             loss.backward()
+            print(loss.item())
+
             optimizer.step()
             running_loss+=(loss.item()*tmp_batch_size)
 
