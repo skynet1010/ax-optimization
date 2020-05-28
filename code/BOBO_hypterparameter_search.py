@@ -146,6 +146,9 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
         ],
         evaluation_function=objective,
         objective_name='accuracy',
+        minimize=False,
+        arms_per_trial=1,
+        total_trials=20#<---------------------------anpassen je nach task =)
     )
         
     return True
