@@ -43,7 +43,7 @@ def evaluate(
             
             out_softmax = softmax(output)
 
-            loss = criterion(output, lbl_onehot)
+            loss = criterion(out_softmax, lbl_onehot)
 
             running_loss+=(loss.item()*tmp_batch_size)
             confidence, predicted = torch.max(out_softmax.data, 1)
