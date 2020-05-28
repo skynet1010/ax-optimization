@@ -115,7 +115,7 @@ def objective(parameters:Dict):
                 print('| WARNING: ran out of memory, halfing batch size')
                 args.batch_size=max(1,args.batch_size//2)
                 print(f"Batch size is now: {args.batch_size}")
-                return objective(parameters)
+                continue
             else:
                 print("Another RuntimeError occured during train an validation", e)
                 exit(1) 
