@@ -66,19 +66,19 @@ def train(
 
             tp_idx = (pred_cpu[label_ones_idx]==labels[label_ones_idx]).nonzero()
             tp += tp_idx.size()[0]
-            #print(tp)
+            print(tp)
 
             fp_idx = (pred_cpu[label_ones_idx]!=labels[label_ones_idx]).nonzero()
             fp += fp_idx.size()[0]
-            #print(fp)
+            print(fp)
 
             tn_idx = (pred_cpu[label_zeroes_idx]==labels[label_zeroes_idx]).nonzero()
             tn += tn_idx.size()[0]
-            #print(tn)
+            print(tn)
 
             fn_idx = (pred_cpu[label_zeroes_idx]!=labels[label_zeroes_idx]).nonzero()
             fn += fn_idx.size()[0]
-            #print(fn)
+            print(fn)
             exit(1)
 
             #print("bis hier alles gut xD")
