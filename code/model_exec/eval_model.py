@@ -73,5 +73,5 @@ def evaluate(
             tn_c += confidence[tn_idx].sum().item()
             fn_c += confidence[fn_idx].sum().item()
 
-    metrics = {"acc":correct/total, "loss":running_loss/total,"TP":tp,"FN":fn,"FP":fp,"TN":tn,"TPC":tp_c/max(1,tp),"FPC":fp_c/max(1,fp),"TNC":tn_c/max(1,tn),"FNC":fn_c/max(1,fn)}
+    metrics = {"acc":correct/total, "loss":running_loss/total,"TP":tp,"FN":fn,"FP":fp,"TN":tn,"AVG_TPC":tp_c/max(1,tp),"AVG_FPC":fp_c/max(1,fp),"AVG_TNC":tn_c/max(1,tn),"AVG_FNC":fn_c/max(1,fn)}
     return metrics
