@@ -29,7 +29,6 @@ def train(
     fp_c = 0
     tn_c = 0
     fn_c = 0
-    print(len(train_data_loader))
 
     for e in range(args.epochs):
         for step,data in enumerate(train_data_loader):
@@ -41,23 +40,19 @@ def train(
             lbl_onehot = lbl_onehot.scatter(1,data["labels"].to(device=device,dtype=torch.long),1).to(device=device,dtype=dtype)
             # ===================forward=====================
             output = model(img)
-            #print(output.size(),lbl_onehot.size())
-            #print(output,lbl_onehot)
+            
             out_softmax = softmax(output)
 
             loss = criterion(out_softmax, lbl_onehot)
-            #print(loss.item())
 
             # ===================backward====================
             optimizer.zero_grad()
             loss.backward()
-            #print(loss.item())
 
             optimizer.step()
             running_loss+=(loss.item()*tmp_batch_size)
 
             out_softmax = softmax(output)
-            #print(out_softmax)
 
             confidence, predicted = torch.max(out_softmax, 1)
             total += tmp_batch_size
@@ -70,31 +65,21 @@ def train(
 
             tp_idx = (pred_cpu[label_ones_idx]==labels[label_ones_idx]).nonzero()
             tp += tp_idx.size()[0]
-            #print(tp)
 
             fp_idx = (pred_cpu[label_ones_idx]!=labels[label_ones_idx]).nonzero()
             fp += fp_idx.size()[0]
-            #print(fp)
 
             tn_idx = (pred_cpu[label_zeroes_idx]==labels[label_zeroes_idx]).nonzero()
             tn += tn_idx.size()[0]
-            #print(tn)
 
             fn_idx = (pred_cpu[label_zeroes_idx]!=labels[label_zeroes_idx]).nonzero()
             fn += fn_idx.size()[0]
-            #print(fn)
-            #exit(1)
 
-            #print("bis hier alles gut xD")
-            #print(tp_idx.size())
-            #print(fn,tn,fp,tp)
             tp_c += confidence[tp_idx].sum().item()
-            #print(tp_c,tp_idx.size())
             fp_c += confidence[fp_idx].sum().item()
             tn_c += confidence[tn_idx].sum().item()
             fn_c += confidence[fn_idx].sum().item()
 
     metrics = {"acc":correct/total, "loss":running_loss/total,"TP":tp,"FN":fn,"FP":fp,"TN":tn,"TPC":tp_c/tp,"FPC":fp_c/fp,"TNC":tn_c/tn,"FNC":fn_c/fn}
-    print(metrics)
-    exit(1)
+
     return model,metrics
