@@ -1,22 +1,21 @@
 import torch
 from typing import Dict
 from utils.consts import nr_of_classes, loss_dict,optimizer_dict
-
+from argparse import Namespace
 
 def train(
     model: torch.nn.Module,
     train_data_loader: torch.utils.data.DataLoader, 
-    parameters: Dict,
-    device: torch.device,
-    dtype: torch.dtype,
+    optimizer:torch.optim.Optimizer,
+    criterion:torch.nn.modules.loss._Loss,
+    args:Namespace,
+    device: torch.device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+    dtype: torch.dtype=torch.float,
 ) -> torch.nn.Module:
     
     model.to(device=device,dtype=dtype)
     model.train()
-
-    criterion = loss_dict[parameters.get("criterion","MSELoss")]
-    optimizer = optimizer_dict[parameters.get("optimizer","Adam")](model.parameters(), lr=parameters.get("lr",1e-3),weight_decay=parameters.get("weight_decay",1e-5))
-    
+   
     running_loss = 0
     correct= 0
     total=0
@@ -33,9 +32,7 @@ def train(
     fn_c = 0
 
 
-    num_epochs = parameters.get("num_epochs", 20)
-    print(num_epochs)
-    for e in range(num_epochs):
+    for e in range(args.epochs):
         for step,data in enumerate(train_data_loader):
             tmp_batch_size = len(data["labels"])
             lbl_onehot = torch.FloatTensor(tmp_batch_size,2).to(device=device,dtype=dtype)

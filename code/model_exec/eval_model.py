@@ -6,16 +6,13 @@ from typing import Dict
 def evaluate(
     model: torch.nn.Module,
     eval_data_loader: torch.utils.data.DataLoader,
-    parameters: Dict, 
-    device: torch.device,
-    dtype: torch.dtype
+    criterion:torch.nn.modules.loss._Loss,
+    device: torch.device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+    dtype: torch.dtype=torch.float
 ) -> Dict:
     model.to(device=device,dtype=dtype)
 
     model.eval()
-
-    criterion = loss_dict[parameters.get("criterion","MSELoss")]
-
 
     correct = 0
     total = 0

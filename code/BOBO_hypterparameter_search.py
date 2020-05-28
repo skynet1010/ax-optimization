@@ -53,8 +53,11 @@ def objective(parameters):
 
     train_data_loader, valid_data_loader, test_data_loader = get_dataloaders(args,ss,data_composition_key, model_key)
     model = manipulateModel(model_key,args.is_feature_extraction,data_compositions[data_composition_key])
-    criterion = parameters.get("criterion")
+    
+    criterion = loss_dict[parameters.get("criterion","MSELoss")]
     optimizer = optimizer_dict[parameters.get("optimizer")](model.parameters(), lr=parameters.get("lr"),weight_decay=parameters.get("weight_decay"))
+
+
 
     best_loss = sys.float_info.max
     best_acc = 0.0
@@ -65,8 +68,8 @@ def objective(parameters):
     try:
         for epoch in range(args.epochs+1):
             start = time.time()
-            model,train_metrics = train(model,train_data_loader,criterion,optimizer,args.batch_size) 
-            valid_metrics =  evaluate(model,valid_data_loader,criterion,optimizer,args.batch_size)
+            model,train_metrics = train(model,train_data_loader,optimizer,criterion,args) 
+            valid_metrics =  evaluate(model,valid_data_loader,criterion)
 
             train_metrics = calc_metrics(train_metrics)
             valid_metrics = calc_metrics(valid_metrics)
@@ -110,7 +113,7 @@ def objective(parameters):
     model.load_state_dict(best_checkpoint["model_state_dict"])
     optimizer.load_state_dict(best_checkpoint["optimizer_state_dict"])
     start = time.time()
-    test_metrics = evaluate(model,test_data_loader,criterion,optimizer,args.batch_size)
+    test_metrics = evaluate(model,test_data_loader,criterion)
 
     test_metrics = calc_metrics(test_metrics)
     test_metrics["exec_time"] = time.time()-start

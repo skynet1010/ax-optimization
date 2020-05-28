@@ -65,3 +65,4 @@ loss_dict = {
     "BCELoss":torch.nn.BCELoss,
     "MSELoss":torch.nn.MSELoss
 }
+
