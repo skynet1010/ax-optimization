@@ -66,15 +66,15 @@ def objective(parameters):
     update = False
     no_improve_it = 0
     try:
-        for epoch in range(args.epochs+1):
+        for epoch in range(1,args.epochs+1):
             start = time.time()
-            model,train_metrics = train(model,train_data_loader,optimizer,criterion,args) 
+            model,train_metrics = train(model,train_data_loader,optimizer,criterion) 
             valid_metrics =  evaluate(model,valid_data_loader,criterion)
 
             train_metrics = calc_metrics(train_metrics)
-            print("TRAIN:",train_metrics)
+            #print("TRAIN:",train_metrics)
             valid_metrics = calc_metrics(valid_metrics)
-            print("VALID:", valid_metrics)
+            #print("VALID:", valid_metrics)
             curr_exec_time = time.time()-start
 
             train_metrics["exec_time"] = curr_exec_time
@@ -101,7 +101,7 @@ def objective(parameters):
             cur.execute(insert_row(args.validation_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=valid_metrics))
             conn.commit()
 
-            print('epoch [{}/{}], loss:{:.4f}, {:.4f}%, time: {}'.format(epoch, args.epochs, valid_metrics["loss"],valid_metrics["acc"]*100, curr_exec_time))        
+            print('epoch [{}/{}], loss:{:.4f}, acc: {:.4f}%, time: {} s'.format(epoch, args.epochs, valid_metrics["loss"],valid_metrics["acc"]*100, curr_exec_time))        
             if no_improve_it == args.earlystopping_it:
                 break
     except Exception as e:
@@ -120,7 +120,7 @@ def objective(parameters):
     test_metrics = calc_metrics(test_metrics)
     test_metrics["exec_time"] = time.time()-start
     
-    cur.execute(insert_row(args.test_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=valid_metrics))
+    cur.execute(insert_row(args.test_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=test_metrics))
     conn.commit()
 
     return best_acc
