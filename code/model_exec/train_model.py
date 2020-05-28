@@ -12,7 +12,6 @@ def train(
     device: torch.device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
     dtype: torch.dtype=torch.float,
 ) -> torch.nn.Module:
-    print("HALLO TRAIN")
     model.to(device=device,dtype=dtype)
     model.train()
    
@@ -30,32 +29,23 @@ def train(
     fp_c = 0
     tn_c = 0
     fn_c = 0
-    print("HELLO2")
 
     for e in range(args.epochs):
         for step,data in enumerate(train_data_loader):
             tmp_batch_size = len(data["labels"])
             lbl_onehot = torch.FloatTensor(tmp_batch_size,2).to(device=device,dtype=dtype)
-            print("HELLO3")
             # =============datapreprocessing=================
             img = torch.FloatTensor(data["imagery"].float()).to(device=device,dtype=dtype)
             lbl_onehot.zero_()
             lbl_onehot = lbl_onehot.scatter(1,data["labels"].to(device=device,dtype=torch.long),1).to(device=device,dtype=dtype)
             # ===================forward=====================
-            print("HELLO4")
             output = model(img)
-            print("HELLO$$$")
-            print(output)
-            print(lbl_onehot)
             loss = criterion(output, lbl_onehot)
-            print("HELLO5")
             # ===================backward====================
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             running_loss+=(loss.item()*tmp_batch_size)
-            #determine acc
-            print("HELLO6")
 
             out_softmax = softmax(output)
             print(out_softmax)
@@ -69,7 +59,8 @@ def train(
             label_ones_idx = labels.nonzero()
             label_zeroes_idx = (labels==0).nonzero()
             tp_idx = pred_cpu[label_ones_idx]==labels[label_ones_idx]
-            print(tp_idx)
+            print(torch.squeeze(tp_idx))
+            tp_idx = torch.squeeze(tp_idx)
             tp += (tp_idx).sum().item()
             fp_idx = pred_cpu[label_ones_idx]!=labels[label_ones_idx]
             fp += (fp_idx).sum().item()
