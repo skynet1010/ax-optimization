@@ -12,7 +12,7 @@ def train(
     device: torch.device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
     dtype: torch.dtype=torch.float,
 ) -> torch.nn.Module:
-    
+    print("HALLO TRAIN")
     model.to(device=device,dtype=dtype)
     model.train()
    
@@ -51,6 +51,7 @@ def train(
             running_loss+=(loss.item()*tmp_batch_size)
             #determine acc
             out_softmax = torch.nn.Softmax(dim=1)
+            print(out_softmax)
 
             confidence, predicted = torch.max(out_softmax, 1)
             total += tmp_batch_size
