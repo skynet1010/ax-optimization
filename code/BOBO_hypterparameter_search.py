@@ -4,12 +4,12 @@ from psycopg2.extensions import connection
 import torch
 from torch import nn
 import numpy as np
-import ax
+# import ax
 
-from ax.plot.contour import plot_contour
-from ax.plot.trace import optimization_trace_single_method
+# from ax.plot.contour import plot_contour
+# from ax.plot.trace import optimization_trace_single_method
 from ax.service.managed_loop import optimize
-from ax.utils.notebook.plotting import render, init_notebook_plotting
+#from ax.utils.notebook.plotting import render, init_notebook_plotting
 from typing import Dict
 import time
 import os
@@ -138,7 +138,7 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
     make_sure_table_exist(args, conn, cur, args.validation_results_ax_table_name)
     make_sure_table_exist(args, conn, cur, args.test_results_ax_table_name)
 
-    best_parameters, values, experiment, model = ax.optimize(
+    best_parameters, values, experiment, model = optimize(
         parameters=[
             {"name": "lr", "type": "range", "bounds": [1e-7, 0.5], "log_scale": True},
             {"name": "weight_decay", "type": "range", "bounds": [1e-8, .5],"log_scale": True},
