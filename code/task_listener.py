@@ -52,7 +52,7 @@ def start_task_listener(args):
                 if task=="create_hyperparameter_optimization_task":
                     finished_successfully = hyperparameter_optimization_task_creator(conn,args)
                 elif task.split(":")[0] == "HO":
-                    finished_successfully = hyperparameter_optimization(conn,args,task)
+                    finished_successfully = hyperparameter_optimization(args, conn,task)
                 conn.close()
             except RuntimeError as e:
                 if 'out of memory' in str(e):
