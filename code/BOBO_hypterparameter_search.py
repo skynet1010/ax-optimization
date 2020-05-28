@@ -47,7 +47,7 @@ def get_valid_path(args,data_composition_key,ss):
 
 
 
-def objective(parameters):
+def objective(parameters:Dict):
     parameters_str = str(parameters).replace("'","*")
     print(parameters_str)
     res_path = get_valid_path(args,data_composition_key,ss)
@@ -59,7 +59,7 @@ def objective(parameters):
     model = manipulateModel(model_key,parameters.get("feature_extraction",True),data_compositions[data_composition_key])
     
     criterion = loss_dict[parameters.get("criterion","MSELoss")]()
-    optimizer = optimizer_dict[parameters.get("optimizer")](model.parameters(), lr=parameters.get("lr"),weight_decay=parameters.get("weight_decay"))
+    optimizer = optimizer_dict[parameters.get("optimizer","Adam")](model.parameters(), lr=parameters.get("lr",1e-3),weight_decay=parameters.get("weight_decay",1e-5))
     
     global best_loss
     global best_acc
@@ -144,11 +144,13 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
     global data_composition_key
     global model_key
     _,ss,data_composition_key,model_key,ntrails,epochs=task.split(":")
-    args.epochs = 2#int(epochs)
+    args.epochs = int(epochs)
 
     make_sure_table_exist(args, conn, cur, args.train_results_ax_table_name)
     make_sure_table_exist(args, conn, cur, args.validation_results_ax_table_name)
     make_sure_table_exist(args, conn, cur, args.test_results_ax_table_name)
+
+    objective({})
 
     best_parameters, values, experiment, model = optimize(
         parameters=[
