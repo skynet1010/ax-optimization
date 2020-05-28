@@ -164,7 +164,7 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
     global data_composition_key
     global model_key
     _,ss,data_composition_key,model_key,ntrails,epochs=task.split(":")
-    args.epochs = 2#int(epochs)
+    args.epochs = int(epochs)
 
     make_sure_table_exist(args, conn, cur, args.train_results_ax_table_name)
     make_sure_table_exist(args, conn, cur, args.validation_results_ax_table_name)
@@ -184,7 +184,7 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
         objective_name='accuracy',
         minimize=False,
         arms_per_trial=1,
-        total_trials=2#int(ntrails)#<---------------------------anpassen je nach task =)
+        total_trials=int(ntrails)#<---------------------------anpassen je nach task =)
     )
     
     save(experiment,os.path.join(res_path,"experiment.json"))
