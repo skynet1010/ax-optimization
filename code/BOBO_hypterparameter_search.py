@@ -170,7 +170,7 @@ def hyperparameter_optimization(a:Namespace,c:connection,t:str):
     make_sure_table_exist(args, conn, cur, args.validation_results_ax_table_name)
     make_sure_table_exist(args, conn, cur, args.test_results_ax_table_name)
 
-    objective({}) #initial run config
+    objective_wrapper({}) #initial run config
 
     best_parameters, values, experiment, model = optimize(
         parameters=[
