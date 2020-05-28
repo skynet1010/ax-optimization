@@ -1,5 +1,5 @@
 import torch
-from code.utils.consts import nr_of_classes, loss_dict
+from utils.consts import nr_of_classes, loss_dict
 from typing import Dict
 
 

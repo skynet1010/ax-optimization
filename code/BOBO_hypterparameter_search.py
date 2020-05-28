@@ -15,13 +15,13 @@ import time
 import os
 import sys
 
-from code.utils.dataloader_provider import get_dataloaders
-from code.utils.postgres_functions import insert_row,  make_sure_table_exist
-from code.utils.consts import optimizer_dict, loss_dict, data_compositions
-from code.utils.model_manipulator import manipulateModel
-from code.model_exec.eval_model import evaluate
-from code.model_exec.train_model import train
-from code.utils.metric_monitor import calc_metrics
+from utils.dataloader_provider import get_dataloaders
+from utils.postgres_functions import insert_row,  make_sure_table_exist
+from utils.consts import optimizer_dict, loss_dict, data_compositions
+from utils.model_manipulator import manipulateModel
+from model_exec.eval_model import evaluate
+from model_exec.train_model import train
+from utils.metric_monitor import calc_metrics
 
 conn=None
 cur = None

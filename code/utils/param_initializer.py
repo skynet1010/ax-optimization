@@ -1,5 +1,5 @@
 import sys
-from code.utils.postgres_functions import table_row_sql, insert_row
+from utils.postgres_functions import table_row_sql, insert_row
 import time
 
 def init_analysis_params(args, conn, cur, task):
@@ -29,7 +29,7 @@ def init_analysis_params(args, conn, cur, task):
     cur.execute(table_row_sql(args.best_validation_results_table_name, args, task))
     res = cur.fetchall()
     if res == []:
-        cur.execute(insert_row(args.best_validation_results_table_name, args, task, niteration, nepoch,timestamp=time.time(),m1=m))
+        cur.execute(insert_row(args.best_validation_results_table_name, args, task, niteration, nepoch,timestamp=time.time(),m=m))
         conn.commit()
     else:
         _, _, best_acc, best_loss, best_exec_time = res[0]

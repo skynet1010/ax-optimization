@@ -1,6 +1,6 @@
 import torch
 from typing import Dict
-from code.utils.consts import nr_of_classes, loss_dict,optimizer_dict
+from utils.consts import nr_of_classes, loss_dict,optimizer_dict
 
 
 def train(
