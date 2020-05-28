@@ -54,7 +54,7 @@ def objective(parameters):
     train_data_loader, valid_data_loader, test_data_loader = get_dataloaders(args,ss,data_composition_key, model_key)
     model = manipulateModel(model_key,args.is_feature_extraction,data_compositions[data_composition_key])
     
-    criterion = loss_dict[parameters.get("criterion","MSELoss")]
+    criterion = loss_dict[parameters.get("criterion","MSELoss")]()
     optimizer = optimizer_dict[parameters.get("optimizer")](model.parameters(), lr=parameters.get("lr"),weight_decay=parameters.get("weight_decay"))
 
 
