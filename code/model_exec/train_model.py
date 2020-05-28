@@ -43,7 +43,9 @@ def train(
             output = model(img)
             #print(output.size(),lbl_onehot.size())
             #print(output,lbl_onehot)
-            loss = criterion(output, lbl_onehot)
+            out_softmax = softmax(output)
+
+            loss = criterion(out_softmax, lbl_onehot)
             print(loss.item())
 
             # ===================backward====================
