@@ -42,6 +42,7 @@ def train(
             # ===================forward=====================
             output = model(img)
             print(output.size(),lbl_onehot.size())
+            print(output,lbl_onehot)
             loss = criterion(output, lbl_onehot)
             # ===================backward====================
             optimizer.zero_grad()
