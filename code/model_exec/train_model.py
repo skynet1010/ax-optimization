@@ -58,32 +58,26 @@ def train(
 
             label_ones_idx = torch.squeeze(labels.nonzero())
             label_zeroes_idx = torch.squeeze((labels==0).nonzero())
-            #print(label_ones_idx,label_ones_idx.size())
-            tp_idx = (pred_cpu[label_ones_idx]==labels[label_ones_idx]).nonzero()
-            print(tp_idx,tp_idx.size())
-            tp_idx = torch.squeeze(tp_idx)
-            tp += (tp_idx).sum().item()
 
-            fp_idx = pred_cpu[label_ones_idx]!=labels[label_ones_idx]
-            fp_idx = torch.squeeze(fp_idx)
-            fp += (fp_idx).sum().item()
+            tp_idx = torch.squeeze((pred_cpu[label_ones_idx]==labels[label_ones_idx]).nonzero())
+            tp += tp_idx.size()[0]
+
+            fp_idx = torch.squeeze((pred_cpu[label_ones_idx]!=labels[label_ones_idx]).nonzero())
+            fp += fp_idx.size()[0]
             
-            tn_idx = pred_cpu[label_zeroes_idx]==labels[label_zeroes_idx]
-            tn_idx = torch.squeeze(tn_idx)
-            tn += (tn_idx).sum().item()
+            tn_idx = torch.squeeze((pred_cpu[label_zeroes_idx]==labels[label_zeroes_idx]).nonzero())
+            tn += tn_idx.size()[0]
 
-            fn_idx = pred_cpu[label_zeroes_idx]!=labels[label_zeroes_idx] 
-            fn_idx = torch.squeeze(fn_idx)
-            fn += (fn_idx).sum().item()
+            fn_idx = torch.squeeze((pred_cpu[label_zeroes_idx]!=labels[label_zeroes_idx]).nonzero())
+            fn += fn_idx.size()[0]
 
             #print("bis hier alles gut xD")
             print(tp_idx.size())
-            tp_c += confidence[tp_idx.numpy().tolist()].sum().item()
-            print(tp_c)
+            tp_c += confidence[tp_idx].sum().item()
             fp_c += confidence[fp_idx].sum().item()
             tn_c += confidence[tn_idx].sum().item()
             fn_c += confidence[fn_idx].sum().item()
 
     metrics = {"acc":correct/total, "loss":running_loss/total,"TP":tp,"FN":fn,"FP":fp,"TN":tn,"TPC":tp_c/total,"FPC":fp_c/total,"TNC":tn_c/total,"FNC":fn_c/total}
-                        
+    print(metrics)
     return model,metrics
