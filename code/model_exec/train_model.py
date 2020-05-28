@@ -30,18 +30,19 @@ def train(
     fp_c = 0
     tn_c = 0
     fn_c = 0
-
+    print("HELLO2")
 
     for e in range(args.epochs):
         for step,data in enumerate(train_data_loader):
             tmp_batch_size = len(data["labels"])
             lbl_onehot = torch.FloatTensor(tmp_batch_size,2).to(device=device,dtype=dtype)
-
+            print("HELLO3")
             # =============datapreprocessing=================
             img = torch.FloatTensor(data["imagery"].float()).to(device=device,dtype=dtype)
             lbl_onehot.zero_()
             lbl_onehot = lbl_onehot.scatter(1,data["labels"].to(device=device,dtype=torch.long),1).to(device=device,dtype=dtype)
             # ===================forward=====================
+            print("HELLO4")
             output = model(img)
             loss = criterion(output, lbl_onehot)
             # ===================backward====================
