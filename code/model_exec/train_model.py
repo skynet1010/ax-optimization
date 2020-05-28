@@ -50,7 +50,7 @@ def train(
             optimizer.step()
             running_loss+=(loss.item()*tmp_batch_size)
             #determine acc
-            out_softmax = torch.nn.Softmax(dim=1)
+            out_softmax = softmax(output)
             print(out_softmax)
 
             confidence, predicted = torch.max(out_softmax, 1)
