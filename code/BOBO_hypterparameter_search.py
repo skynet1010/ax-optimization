@@ -45,7 +45,7 @@ def get_valid_path(args,data_composition_key,ss):
     return res_path
 
 def objective(parameters):
-    parameters_str = str(parameters)
+    parameters_str = str(parameters).replace("'","*")
     print(parameters_str)
     res_path = get_valid_path(args,data_composition_key,ss)
 
