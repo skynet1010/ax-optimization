@@ -41,14 +41,14 @@ def train(
             lbl_onehot = lbl_onehot.scatter(1,data["labels"].to(device=device,dtype=torch.long),1).to(device=device,dtype=dtype)
             # ===================forward=====================
             output = model(img)
-            print(output.size(),lbl_onehot.size())
-            print(output,lbl_onehot)
+            #print(output.size(),lbl_onehot.size())
+            #print(output,lbl_onehot)
             loss = criterion(output, lbl_onehot)
             # ===================backward====================
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            print(loss.size())
+            print(loss)
             running_loss+=(loss.item()*tmp_batch_size)
 
             out_softmax = softmax(output)
