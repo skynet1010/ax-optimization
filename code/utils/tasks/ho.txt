@@ -1,0 +1,1 @@
+HO:ss32:RGB_SLOPE:alexnet:150:35
