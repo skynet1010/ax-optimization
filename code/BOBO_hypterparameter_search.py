@@ -70,6 +70,11 @@ def objective(parameters:Dict):
 
     update = False
     no_improve_it = 0
+
+    local_best_loss= sys.float_info.max
+    local_best_acc=0.0
+
+
     for epoch in range(1,args.epochs+1):
         start = time.time()
         model,train_metrics = train(model,train_data_loader,optimizer,criterion) 
@@ -83,22 +88,31 @@ def objective(parameters:Dict):
 
         train_metrics["exec_time"] = train_exec_time
         valid_metrics["exec_time"] = valid_exec_time
-        if valid_metrics["loss"] < best_loss:
+        if valid_metrics["acc"] > best_acc:
             best_acc = valid_metrics["acc"]
             best_loss = valid_metrics["loss"]
             update=True
-        elif valid_metrics["loss"] == best_loss and best_acc > valid_metrics["acc"]:
-            best_acc = valid_metrics["acc"]
+        elif valid_metrics["acc"] == best_acc and best_loss > valid_metrics["loss"]:
+            best_loss = valid_metrics["loss"]
             update=True
         elif valid_metrics["acc"] == best_acc and best_loss == valid_metrics["loss"] and valid_exec_time<best_exec_time:
             update=True
         if update:
+            local_best_acc = valid_metrics["acc"]
+            local_best_loss = valid_metrics["loss"]
             no_improve_it = 0
             best_exec_time = valid_exec_time
             torch.save({"epoch":epoch,"model_state_dict":model.state_dict(),"optimizer_state_dict":optimizer.state_dict()}, best_checkpoint_path)
             with open(best_param_config_path,"w")as f:
                 json.dump(parameters,f)
             update=False
+        elif valid_metrics["acc"] > local_best_acc:
+            local_best_acc = valid_metrics["acc"]
+            local_best_loss = valid_metrics["loss"]
+            no_improve_it = 0
+        elif valid_metrics["acc"] == local_best_acc and local_best_loss > valid_metrics["loss"]:
+            local_best_loss = valid_metrics["loss"]
+            no_improve_it = 0
         else:
             no_improve_it+=1
         cur.execute(insert_row(args.train_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=train_metrics))
