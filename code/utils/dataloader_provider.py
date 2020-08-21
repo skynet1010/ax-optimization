@@ -11,8 +11,7 @@ from numpy import floor
 
 def get_dataloaders(args,ss, data_composition_key,model_key,validation=True):
 
-    input_filename = f"train_test_data_{ss}_supervised_new.hdf5"
-
+    input_filename = "hard2classify.hdf5"
     real_data_path = os.path.join("..","data")
     if not os.path.isdir(real_data_path):
         try:
@@ -21,14 +20,6 @@ def get_dataloaders(args,ss, data_composition_key,model_key,validation=True):
             print(e)
             exit(1)
 
-    valid_ss = ["ss8","ss16","ss24","ss32"]
-    for v_ss in valid_ss:
-        if v_ss!=ss:
-            old_input_filename = os.path.join(real_data_path,f"train_test_data_{v_ss}_supervised_new.hdf5")
-            if not os.path.isfile(old_input_filename):
-                continue
-            else:
-                os.remove(old_input_filename)
 
         
     full_real_input_filename = os.path.join(real_data_path,input_filename)
@@ -46,7 +37,7 @@ def get_dataloaders(args,ss, data_composition_key,model_key,validation=True):
     test_data_loader = torch.utils.data.DataLoader(test_ds,num_workers=cpu_count,batch_size=args.batch_size,pin_memory=True,shuffle=False)
 
     if validation:
-        validation_split = 0.142857143
+        validation_split = 0.05#0.142857143
         train_ds_size = len(train_ds)
         indices = list(range(train_ds_size))
         split = int(floor(validation_split * train_ds_size))
