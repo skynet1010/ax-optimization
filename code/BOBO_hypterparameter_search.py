@@ -140,7 +140,7 @@ def objective(parameters:Dict):
     cur.execute(insert_row(args.test_results_ax_table_name,args, task,parameters_str,epoch,timestamp=time.time(),m=test_metrics))
     conn.commit()
 
-    return best_acc,True
+    return local_best_acc,True
 
 def objective_wrapper(parameters:Dict):
     finished_successfully=False

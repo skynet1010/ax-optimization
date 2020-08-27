@@ -13,7 +13,7 @@ def main():
     parser.add_argument("-r", "--results_dir", dest="results_dir", default=os.path.join("..","shared","results"))
     parser.add_argument("-rmqs", "--rabbitmq_server", dest="rabbitmq_server", default="messagebroker") #sollte durch den k8s proxy aufgelöst werden.
     parser.add_argument("-dbh", "--database_host", dest="database_host", default="postgres") #sollte durch den k8s proxy aufgelöst werden.
-    parser.add_argument("-db", "--database", dest="database", default="elfi_elite")
+    parser.add_argument("-db", "--database", dest="database", default="elfi_elite_final_20200827")
     parser.add_argument("-dbu", "--database_user", dest="database_user", default="user")
     parser.add_argument("-dbpw", "--database_password", dest="database_password", default="password123")
     parser.add_argument("-eit", "--earlystopping_it", dest="earlystopping_it", default=5,type=int)

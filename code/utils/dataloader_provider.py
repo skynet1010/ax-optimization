@@ -30,7 +30,7 @@ def get_dataloaders(args,ss, data_composition_key,model_key,validation=True):
             print(e)
             exit(1)
 
-    train_ds = Dataset(full_real_input_filename, "supervised","train",data_composition_key,model_key)
+    train_ds = Dataset(full_real_input_filename, "supervised","training",data_composition_key,model_key)
     test_ds = Dataset(full_real_input_filename, "supervised","test",data_composition_key, model_key)
     cpu_count = multiprocessing.cpu_count()
 
