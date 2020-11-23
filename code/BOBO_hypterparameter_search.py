@@ -124,7 +124,7 @@ def objective(parameters:Dict):
         print('epoch [{}/{}], loss:{:.4f}, acc: {:.4f}%, time: {} s'.format(epoch, args.epochs, valid_metrics["loss"],valid_metrics["acc"]*100, train_exec_time+valid_exec_time))        
         if no_improve_it == args.earlystopping_it:
             break
-    model = manipulateModel(model_key,args.is_feature_extraction,data_compositions[data_composition_key])
+    model = manipulateModel(model_key,args.is_feature_extraction,data_compositions[data_composition_key],args)
     if not os.path.isfile(best_checkpoint_path):
         print("Best checkpoint file does not exist!!!")
         return exit(1)
