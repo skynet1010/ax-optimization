@@ -8,14 +8,13 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from numpy import floor
 
 
-
 def get_dataloaders(args,ss, data_composition_key,model_key,validation=True):
 
     input_filename = f"train_test_data_{ss}_supervised.hdf5"
     
     full_input_filename = os.path.join(args.data_dir,"{}".format(input_filename))
     
-    train_ds = Dataset(full_input_filename, "supervised","training",data_composition_key,model_key)
+    train_ds = Dataset(full_input_filename, "supervised","train",data_composition_key,model_key) #for elite ds must be training!!! o.O
     test_ds = Dataset(full_input_filename, "supervised","test",data_composition_key, model_key)
     cpu_count = multiprocessing.cpu_count()
 
