@@ -1,14 +1,15 @@
 from torch import nn
 from utils.consts import nr_of_classes, model_dict
-
+import os 
+import torch
 
 def set_parameter_requires_grad(model, feature_extracting):
     if feature_extracting:
         for param in model.parameters():
             param.requires_grad = False
 
-def manipulateModel(model_name, is_feature_extraction,dim):
-    model = model_dict[model_name](pretrained=True)
+def manipulateModel(model_name, is_feature_extraction,dim, args):
+    model = model_dict[model_name](pretrained=True) if args.internet_conn_exist == 1 else torch.load(os.path.join("anns", "resnet-18.pth"))
     set_parameter_requires_grad(model, is_feature_extraction)
     #output layer
     if model_name == "resnet18" or \

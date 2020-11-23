@@ -53,13 +53,14 @@ def objective(parameters:Dict):
     parameters_str = str(parameters).replace("'","*")
     print(parameters_str)
     global res_path
+    global args
     res_path = get_valid_path(args,data_composition_key,ss)
 
     best_checkpoint_path = os.path.join(res_path,f"best_{model_key}_final.pth")
     best_param_config_path = os.path.join(res_path,f"best_{model_key}_param_config.json")
 
     train_data_loader, valid_data_loader, test_data_loader = get_dataloaders(args,ss,data_composition_key, model_key)
-    model = manipulateModel(model_key,parameters.get("feature_extraction",True),data_compositions[data_composition_key])
+    model = manipulateModel(model_key,parameters.get("feature_extraction",True),data_compositions[data_composition_key],args)
     
     criterion = loss_dict[parameters.get("criterion","MSELoss")]()
     optimizer = optimizer_dict[parameters.get("optimizer","Adam")](model.parameters(), lr=parameters.get("lr",1e-3),weight_decay=parameters.get("weight_decay",1e-5))

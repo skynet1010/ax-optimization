@@ -21,6 +21,7 @@ def main():
     parser.add_argument("-vraxtn", "--validation_results_ax_table_name", dest="validation_results_ax_table_name", default="validation_results_ax")
     parser.add_argument("-traxtn", "--train_results_ax_table_name", dest="train_results_ax_table_name", default="train_results_ax")
     parser.add_argument("-rd", "--run_dir", dest="run_dir", default="candar_runs")
+    parser.add_argument("-ic", "--internet_conn_exist", dest="internet_conn_exist", default=0, type=int, help="0=False,1=True")
     args = parser.parse_args()
     
     args.rabbitmq_server = get_valid_ip(args.rabbitmq_server)
