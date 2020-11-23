@@ -11,7 +11,7 @@ from numpy import floor
 
 def get_dataloaders(args,ss, data_composition_key,model_key,validation=True):
 
-    input_filename = "hard2classify.hdf5"
+    input_filename = f"train_test_data_{ss}_supervised.hdf5"
     real_data_path = os.path.join("..","data")
     if not os.path.isdir(real_data_path):
         try:
